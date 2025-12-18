@@ -1,0 +1,106 @@
+import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import pool from '../database';
+
+export interface CartItemRecord {
+  id: number;
+  cart_id: number;
+  product_id: number;
+  quantity: number;
+  created_at: Date;
+  updated_at: Date;
+  product_name?: string;
+  price?: number;
+  thumbnail_url?: string | null;
+  stock_quantity?: number;
+}
+
+export interface CartRecord {
+  id: number;
+  user_id: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+class CartRepository {
+  async getOrCreateCart(userId: number): Promise<CartRecord> {
+    // Try to get existing cart
+    const [rows] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM carts WHERE user_id = ? LIMIT 1',
+      [userId]
+    );
+    
+    if (rows.length > 0) {
+      return rows[0] as CartRecord;
+    }
+    
+    // Create new cart if doesn't exist
+    const [result] = await pool.query<ResultSetHeader>(
+      'INSERT INTO carts (user_id) VALUES (?)',
+      [userId]
+    );
+    
+    const [newRows] = await pool.query<RowDataPacket[]>(
+      'SELECT * FROM carts WHERE id = ?',
+      [result.insertId]
+    );
+    
+    return newRows[0] as CartRecord;
+  }
+
+  async getItemsByUser(userId: number): Promise<CartItemRecord[]> {
+    const cart = await this.getOrCreateCart(userId);
+    
+    const [rows] = await pool.query<RowDataPacket[]>(
+      `SELECT ci.*, p.name as product_name, p.price, p.thumbnail_url, p.stock_quantity
+       FROM cart_items ci
+       INNER JOIN products p ON p.id = ci.product_id
+       WHERE ci.cart_id = ?
+       ORDER BY ci.created_at DESC`,
+      [cart.id],
+    );
+    return rows as CartItemRecord[];
+  }
+
+  async addItem(userId: number, productId: number, quantity: number): Promise<CartItemRecord[]> {
+    const cart = await this.getOrCreateCart(userId);
+    
+    await pool.query<ResultSetHeader>(
+      `INSERT INTO cart_items (cart_id, product_id, quantity)
+       VALUES (?, ?, ?)
+       ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)`,
+      [cart.id, productId, quantity],
+    );
+    return this.getItemsByUser(userId);
+  }
+
+  async updateItem(itemId: number, userId: number, quantity: number): Promise<CartItemRecord[]> {
+    const cart = await this.getOrCreateCart(userId);
+    
+    await pool.query<ResultSetHeader>(
+      `UPDATE cart_items SET quantity = ?, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = ? AND cart_id = ?`,
+      [quantity, itemId, cart.id],
+    );
+    return this.getItemsByUser(userId);
+  }
+
+  async removeItem(itemId: number, userId: number): Promise<CartItemRecord[]> {
+    const cart = await this.getOrCreateCart(userId);
+    
+    await pool.query<ResultSetHeader>(
+      'DELETE FROM cart_items WHERE id = ? AND cart_id = ?',
+      [itemId, cart.id]
+    );
+    return this.getItemsByUser(userId);
+  }
+
+  async clear(userId: number): Promise<void> {
+    const cart = await this.getOrCreateCart(userId);
+    await pool.query<ResultSetHeader>('DELETE FROM cart_items WHERE cart_id = ?', [cart.id]);
+  }
+}
+
+const cartRepository = new CartRepository();
+
+export default cartRepository;
+
