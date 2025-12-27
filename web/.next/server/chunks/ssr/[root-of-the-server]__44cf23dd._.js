@@ -101,6 +101,10 @@ class ApiClient {
     async getCategory(id) {
         return this.request(`/categories/${id}`);
     }
+    // Flash sales
+    async getActiveFlashSales() {
+        return this.request('/flash-sales/active');
+    }
     // Các endpoint giỏ hàng
     async getCart() {
         return this.request('/cart', {

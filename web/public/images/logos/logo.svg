@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="512" height="512" role="img" aria-label="Cần Thủ Shop fish and rod logo">
+  <title>Cần Thủ Shop - Fish & Rod</title>
+  <rect width="200" height="200" fill="none" />
+
+  <!-- Outer fishing line loop -->
+  <path d="M40 40c28-26 76-28 112-6 24 18 30 56 10 82-26 34-76 54-118 38" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.95" />
+
+  <!-- Fishing rod (top-right) -->
+  <path d="M150 12c6 6 6 16 0 22L92 92" fill="none" stroke="white" stroke-width="5" stroke-linecap="round" />
+  <circle cx="148" cy="14" r="3.5" fill="white" />
+
+  <!-- Line from rod tip looping around to fish hook -->
+  <path d="M150 22c-18 18-46 44-70 66-10 8-22 18-30 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Fish body -->
+  <g transform="translate(24,46)">
+    <path d="M64 6c24 0 38 14 44 22 4 6 6 14 2 22-6 12-20 20-42 26-20 5-36 2-46-6-8-6-10-16-6-26 6-16 22-36 48-36z" fill="white" />
+    <!-- Eye -->
+    <circle cx="82" cy="26" r="4" fill="#111" />
+    <!-- Mouth hook/mark -->
+    <path d="M36 40c-2 2-4 6-2 10 3 6 12 8 18 6" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" />
+    <!-- Tail -->
+    <path d="M10 44c6-8 14-12 22-10-2 6-2 14-14 26-6 6-10 6-12 4s2-8 4-10z" fill="white" />
+  </g>
+
+  <!-- Small hook at end of line near fish mouth -->
+  <path d="M72 72c6 6 6 14 2 18" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" />
+
+</svg>
