@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../interfaces/http/middlewares/authMiddleware';
 import { adminMiddleware } from '../interfaces/http/middlewares/adminMiddleware';
-import productRepository from '../infrastructure/repositories/productRepository';
-import categoryRepository from '../infrastructure/repositories/categoryRepository';
-import orderRepository from '../infrastructure/repositories/orderRepository';
-import couponRepository from '../infrastructure/repositories/couponRepository';
-import blogRepository from '../infrastructure/repositories/blogRepository';
+import productRepository from '../infrastructure/repositories/productRepositoryImpl';
+import categoryRepository from '../infrastructure/repositories/categoryRepositoryImpl';
+import orderRepository from '../infrastructure/repositories/orderRepositoryImpl';
+import couponRepository from '../infrastructure/repositories/couponRepositoryImpl';
+import blogRepository from '../infrastructure/repositories/blogRepositoryImpl';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -193,7 +193,7 @@ router.get('/products', async (req: Request, res: Response, next: NextFunction) 
  */
 router.post('/products', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { images, ...productData } = req.body;
+    const { images, thumbnail_url, ...productData } = req.body; // Ignore thumbnail_url
     const product = await productRepository.create(productData);
     
     // Lưu ảnh nếu có
@@ -240,14 +240,20 @@ router.post('/products', async (req: Request, res: Response, next: NextFunction)
  *                 type: integer
  *               category_id:
  *                 type: integer
- *               thumbnail_url:
- *                 type: string
  *               status:
  *                 type: string
+ *                 enum: [draft, active, inactive]
  *               images:
  *                 type: array
  *                 items:
  *                   type: object
+ *                   properties:
+ *                     image_url:
+ *                       type: string
+ *                     alt_text:
+ *                       type: string
+ *                     is_primary:
+ *                       type: boolean
  *     responses:
  *       200:
  *         description: Cập nhật thành công
@@ -257,7 +263,7 @@ router.post('/products', async (req: Request, res: Response, next: NextFunction)
 router.put('/products/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = parseInt(req.params.id!);
-    const { images, ...productData } = req.body;
+    const { images, thumbnail_url, ...productData } = req.body; // Ignore thumbnail_url
     const updated = await productRepository.update(id, productData);
     
     if (!updated) {

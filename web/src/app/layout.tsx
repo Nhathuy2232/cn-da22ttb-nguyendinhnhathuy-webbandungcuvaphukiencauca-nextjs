@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
 
@@ -8,6 +8,13 @@ export const metadata: Metadata = {
     "Chuyên cung cấp cần câu, máy câu, dây cước, mồi câu và phụ kiện câu cá chính hãng. Giao hàng toàn quốc, thanh toán linh hoạt.",
   metadataBase: new URL("https://example.com")
 };
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
 
 export default function RootLayout({
   children

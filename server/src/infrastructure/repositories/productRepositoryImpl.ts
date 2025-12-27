@@ -18,7 +18,7 @@ export interface ProductRecord {
   price: number;
   sku: string;
   stock_quantity: number;
-  thumbnail_url: string | null;
+  thumbnail_url?: string | null; // Keep for backward compatibility
   status: 'draft' | 'active' | 'inactive';
   created_at: Date;
   updated_at: Date;
@@ -66,7 +66,20 @@ class ProductRepository {
     );
 
     const total = Number(countRows?.[0]?.total ?? 0);
-    return { items: rows as ProductRecord[], total };
+    const products = rows as ProductRecord[];
+    
+    // Set thumbnail_url cho mỗi sản phẩm
+    for (const product of products) {
+      const [imageRows] = await pool.query<RowDataPacket[]>(
+        'SELECT image_url FROM product_images WHERE product_id = ? AND is_primary = 1 LIMIT 1',
+        [product.id]
+      );
+      if (imageRows && imageRows.length > 0 && imageRows[0]) {
+        product.thumbnail_url = imageRows[0].image_url;
+      }
+    }
+    
+    return { items: products, total };
   }
 
   async findById(id: number): Promise<ProductRecord | null> {
@@ -91,15 +104,21 @@ class ProductRepository {
     
     product.images = imageRows as ProductImage[];
     
+    // Set thumbnail_url từ ảnh chính
+    const primaryImage = product.images?.find(img => img.is_primary);
+    if (primaryImage) {
+      product.thumbnail_url = primaryImage.image_url;
+    }
+    
     return product;
   }
 
   async create(data: Omit<ProductRecord, 'id' | 'created_at' | 'updated_at'>): Promise<ProductRecord> {
     const [result] = await pool.query<ResultSetHeader>(
       `INSERT INTO products 
-        (name, description, price, sku, stock_quantity, category_id, thumbnail_url, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [data.name, data.description, data.price, data.sku, data.stock_quantity, data.category_id, data.thumbnail_url, data.status || 'active'],
+        (name, description, price, sku, stock_quantity, category_id, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [data.name, data.description, data.price, data.sku, data.stock_quantity, data.category_id, data.status || 'active'],
     );
     const created = await this.findById(result.insertId);
     if (!created) {
@@ -112,7 +131,7 @@ class ProductRepository {
     id: number,
     data: Partial<Omit<ProductRecord, 'id' | 'created_at' | 'updated_at'>>,
   ): Promise<ProductRecord | null> {
-    const fields = Object.keys(data);
+    const fields = Object.keys(data).filter(key => key !== 'thumbnail_url'); // Ignore thumbnail_url
     if (!fields.length) {
       return this.findById(id);
     }

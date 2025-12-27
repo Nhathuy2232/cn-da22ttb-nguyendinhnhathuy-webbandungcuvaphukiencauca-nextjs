@@ -9,9 +9,13 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  thumbnail_url: string;
+  thumbnail_url?: string;
   stock_quantity: number;
   category_id: number;
+  images?: Array<{
+    image_url: string;
+    is_primary: boolean;
+  }>;
 }
 
 export default function RelatedProducts({ productId, categoryId }: { productId: number; categoryId: number }) {
@@ -74,7 +78,7 @@ export default function RelatedProducts({ productId, categoryId }: { productId: 
           >
             <div className="relative aspect-square overflow-hidden">
               <Image
-                src={product.thumbnail_url || '/images/placeholder.jpg'}
+                src={product.thumbnail_url || product.images?.find(img => img.is_primary)?.image_url || '/images/placeholder.jpg'}
                 alt={product.name}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-300"

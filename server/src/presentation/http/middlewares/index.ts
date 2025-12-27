@@ -2,5 +2,5 @@
  * Index file - Export tất cả các middlewares
  */
 
-export { authenticate, requireAdmin } from './authMiddleware';
-export { default as errorHandler } from './errorMiddleware';
+export { authenticate, authorize } from './authMiddleware';
+export { errorHandler } from './errorHandler';

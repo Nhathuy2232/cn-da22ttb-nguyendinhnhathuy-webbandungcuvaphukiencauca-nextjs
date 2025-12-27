@@ -13,11 +13,19 @@ interface Order {
   payment_method: string;
   created_at: string;
   note?: string;
+  ghn_order_code?: string;
+  recipient_name?: string;
+  recipient_phone?: string;
+  recipient_address?: string;
 }
 
 interface OrderDetail extends Order {
   items?: any[];
   address?: any;
+  shipping_fee?: number;
+  province_id?: number;
+  district_id?: number;
+  ward_code?: string;
 }
 
 export default function AdminOrdersPage() {
@@ -193,8 +201,9 @@ export default function AdminOrdersPage() {
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Khách hàng
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              </th>              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Mã GHN
+              </th>              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Tổng tiền
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -219,6 +228,17 @@ export default function AdminOrdersPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{order.user_name}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900">
+                    {order.ghn_order_code ? (
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                        {order.ghn_order_code}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400 text-xs">Chưa tạo</span>
+                    )}
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-semibold text-gray-900">
@@ -296,6 +316,14 @@ export default function AdminOrdersPage() {
                     {getPaymentMethodText(selectedOrder.payment_method)}
                   </p>
                 </div>
+                {selectedOrder.ghn_order_code && (
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Mã vận đơn GHN</label>
+                    <p className="mt-1 text-sm text-gray-900 font-mono bg-gray-100 px-2 py-1 rounded">
+                      {selectedOrder.ghn_order_code}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <label className="text-sm font-medium text-gray-700">Ngày đặt</label>
                   <p className="mt-1 text-sm text-gray-900">
@@ -310,6 +338,33 @@ export default function AdminOrdersPage() {
                   <p className="mt-1 text-sm text-gray-900 bg-gray-50 p-3 rounded-lg">
                     {selectedOrder.note}
                   </p>
+                </div>
+              )}
+
+              {/* Shipping Information */}
+              {(selectedOrder.recipient_name || selectedOrder.recipient_address) && (
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Thông tin giao hàng</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                    {selectedOrder.recipient_name && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Người nhận:</span>
+                        <span className="text-sm text-gray-900 ml-2">{selectedOrder.recipient_name}</span>
+                      </div>
+                    )}
+                    {selectedOrder.recipient_phone && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Số điện thoại:</span>
+                        <span className="text-sm text-gray-900 ml-2">{selectedOrder.recipient_phone}</span>
+                      </div>
+                    )}
+                    {selectedOrder.recipient_address && (
+                      <div>
+                        <span className="text-sm font-medium text-gray-700">Địa chỉ:</span>
+                        <span className="text-sm text-gray-900 ml-2">{selectedOrder.recipient_address}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 

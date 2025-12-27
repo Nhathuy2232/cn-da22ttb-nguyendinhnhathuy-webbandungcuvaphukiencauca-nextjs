@@ -1,21 +1,32 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
 import { useProducts, useCategories } from '@/hooks/useApi';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { formatPrice } from '@/lib/formatPrice';
 
 export default function ProductsPage() {
-  const searchParams = useSearchParams();
-  const categoryFromUrl = searchParams.get('category');
-  const searchFromUrl = searchParams.get('search');
+  const [categoryFromUrl, setCategoryFromUrl] = useState('');
+  const [searchFromUrl, setSearchFromUrl] = useState('');
   
-  const [search, setSearch] = useState(searchFromUrl || '');
-  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || '');
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [page, setPage] = useState(1);
+
+  // Parse URL params
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get('category') || '';
+    const searchParam = params.get('search') || '';
+    setCategoryFromUrl(category);
+    setSearchFromUrl(searchParam);
+    setSelectedCategory(category);
+    setSearch(searchParam);
+  }, []);
 
   // Đặt danh mục từ URL khi component được mount
   useEffect(() => {
@@ -95,7 +106,7 @@ export default function ProductsPage() {
                   <div className="glass flex flex-col rounded-2xl p-4 cursor-pointer hover:shadow-xl transition-shadow">
                     <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-xl bg-slate-100">
                       <img 
-                        src={product.thumbnail_url || '/images/products/placeholder.jpg'} 
+                        src={product.thumbnail_url || product.images?.find((img: any) => img.is_primary)?.image_url || '/images/products/placeholder.jpg'} 
                         alt={product.name}
                         className="h-full w-full object-cover transition duration-500 hover:scale-105"
                         onError={(e) => {

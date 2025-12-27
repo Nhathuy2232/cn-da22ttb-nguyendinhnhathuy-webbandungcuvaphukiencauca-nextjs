@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import ghnService from '../../../infrastructure/external-services/ghnService';
+import ghnService from '../../../infrastructure/external-services/GHNServiceImpl';
 
 const router = Router();
 

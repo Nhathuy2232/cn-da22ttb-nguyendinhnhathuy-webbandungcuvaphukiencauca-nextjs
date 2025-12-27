@@ -211,9 +211,9 @@ export default function DashboardPage() {
           {stats.topProducts.map((product: any, index: number) => (
             <div key={product.id} className="flex items-center gap-4 p-4 border rounded-lg hover:shadow-md transition-shadow">
               <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                {product.thumbnail_url ? (
+                {product.thumbnail_url || product.images?.find((img: any) => img.is_primary)?.image_url ? (
                   <img
-                    src={product.thumbnail_url}
+                    src={product.thumbnail_url || product.images?.find((img: any) => img.is_primary)?.image_url}
                     alt={product.name}
                     className="w-full h-full object-cover rounded-lg"
                   />

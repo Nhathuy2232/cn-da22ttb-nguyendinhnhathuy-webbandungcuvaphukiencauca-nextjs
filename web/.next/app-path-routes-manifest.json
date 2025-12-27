@@ -1,0 +1,22 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/(marketing)/page": "/",
+  "/about/page": "/about",
+  "/blogs/[slug]/page": "/blogs/[slug]",
+  "/blogs/page": "/blogs",
+  "/login/page": "/login",
+  "/flash-sale/page": "/flash-sale",
+  "/cart/page": "/cart",
+  "/privacy/page": "/privacy",
+  "/products/[id]/page": "/products/[id]",
+  "/register/page": "/register",
+  "/products/page": "/products",
+  "/support/page": "/support",
+  "/admin/blogs/page": "/admin/blogs",
+  "/admin/categories/page": "/admin/categories",
+  "/admin/coupons/page": "/admin/coupons",
+  "/admin/dashboard/page": "/admin/dashboard",
+  "/admin/flash-sales/page": "/admin/flash-sales",
+  "/admin/orders/page": "/admin/orders",
+  "/admin/products/page": "/admin/products"
+}

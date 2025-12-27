@@ -58,6 +58,17 @@ class OrderService {
       }));
     }
 
+    // Validate stock availability
+    for (const item of itemsPayload) {
+      const product = await productRepository.findById(item.productId);
+      if (!product) {
+        throw new Error(`Sản phẩm với ID ${item.productId} không tồn tại`);
+      }
+      if (product.stock_quantity < item.quantity) {
+        throw new Error(`Sản phẩm "${product.name}" không đủ số lượng trong kho. Còn lại: ${product.stock_quantity}, yêu cầu: ${item.quantity}`);
+      }
+    }
+
     const subtotal = itemsPayload.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0,
@@ -242,13 +253,54 @@ class OrderService {
     // Cập nhật trạng thái đơn hàng thành paid
     await orderRepository.updateStatus(orderId, 'paid');
 
+    // Giảm số lượng tồn kho cho từng sản phẩm
+    for (const item of order.items) {
+      const product = await productRepository.findById(item.product_id);
+      if (product) {
+        const newStock = product.stock_quantity - item.quantity;
+        await productRepository.update(item.product_id, { stock_quantity: newStock });
+        
+        // Nếu hết hàng, cập nhật trạng thái sản phẩm
+        if (newStock <= 0) {
+          await productRepository.update(item.product_id, { status: 'out_of_stock' });
+        }
+      }
+    }
+
     // Xóa giỏ hàng của người dùng (các sản phẩm đã thanh toán)
     await cartRepository.clear(userId);
+
+    // Gửi email xác nhận thanh toán
+    try {
+      const user = await userRepository.findById(userId);
+      if (user && user.email) {
+        await emailService.sendOrderConfirmationToCustomer({
+          orderNumber: order.id.toString(),
+          orderDate: order.created_at,
+          customerName: user.full_name || 'Khách hàng',
+          items: order.items.map(item => ({
+            name: item.product_name || `Sản phẩm #${item.product_id}`,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          subtotal: order.total_amount - (order.shipping_fee || 0),
+          shippingFee: order.shipping_fee || 0,
+          total: order.total_amount,
+          paymentMethod: order.payment_method,
+          shippingAddress: order.recipient_address || 'N/A',
+          ghnOrderCode: order.ghn_order_code,
+          customerEmail: user.email,
+        });
+      }
+    } catch (emailError) {
+      console.error('Error sending payment confirmation email:', emailError);
+      // Don't fail the payment if email fails
+    }
 
     return {
       order_id: orderId,
       status: 'paid',
-      message: 'Thanh toán thành công. Giỏ hàng đã được xóa.',
+      message: 'Thanh toán thành công. Giỏ hàng đã được xóa và tồn kho đã được cập nhật.',
     };
   }
 }

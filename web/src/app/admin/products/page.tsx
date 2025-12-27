@@ -19,9 +19,9 @@ interface Product {
   stock_quantity: number;
   category_id: number;
   category_name: string;
-  thumbnail_url: string;
   sku: string;
   status: string;
+  thumbnail_url?: string;
   images?: ProductImage[];
 }
 
@@ -43,7 +43,6 @@ export default function AdminProductsPage() {
     price: "",
     stock_quantity: "",
     category_id: "",
-    thumbnail_url: "",
     sku: "",
     status: "active",
   });
@@ -51,7 +50,6 @@ export default function AdminProductsPage() {
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newImageAlt, setNewImageAlt] = useState("");
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -105,7 +103,6 @@ export default function AdminProductsPage() {
         price: product.price.toString(),
         stock_quantity: product.stock_quantity.toString(),
         category_id: product.category_id?.toString() || "",
-        thumbnail_url: product.thumbnail_url || "",
         sku: product.sku,
         status: product.status,
       });
@@ -118,7 +115,6 @@ export default function AdminProductsPage() {
         price: "",
         stock_quantity: "",
         category_id: "",
-        thumbnail_url: "",
         sku: "",
         status: "active",
       });
@@ -267,52 +263,6 @@ export default function AdminProductsPage() {
     }
   };
 
-  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      alert('Vui lòng chọn file ảnh');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Kích thước file không được vượt quá 5MB');
-      return;
-    }
-
-    setUploadingThumbnail(true);
-
-    try {
-      const token = localStorage.getItem("accessToken");
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const response = await fetch('http://localhost:4000/api/admin/upload', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setFormData(prev => ({ ...prev, thumbnail_url: data.imageUrl }));
-        alert('Tải ảnh đại diện thành công');
-      } else {
-        const error = await response.json();
-        alert(error.message || 'Có lỗi xảy ra khi tải ảnh');
-      }
-    } catch (error) {
-      console.error('Error uploading thumbnail:', error);
-      alert('Có lỗi xảy ra khi tải ảnh');
-    } finally {
-      setUploadingThumbnail(false);
-      e.target.value = '';
-    }
-  };
-
   const handleRemoveImage = (index: number) => {
     const newImages = productImages.filter((_, i) => i !== index);
     // Nếu xóa ảnh chính và còn ảnh khác, đặt ảnh đầu tiên làm ảnh chính
@@ -393,7 +343,7 @@ export default function AdminProductsPage() {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <img
-                      src={product.thumbnail_url || "/placeholder.jpg"}
+                      src={product.thumbnail_url || product.images?.find(img => img.is_primary)?.image_url || "/placeholder.jpg"}
                       alt={product.name}
                       className="w-12 h-12 rounded object-cover"
                     />
@@ -542,36 +492,6 @@ export default function AdminProductsPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Ảnh đại diện</label>
-                <div className="flex items-center gap-3">
-                  {formData.thumbnail_url && (
-                    <img
-                      src={formData.thumbnail_url}
-                      alt="Thumbnail preview"
-                      className="w-20 h-20 object-cover rounded-lg border"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/images/products/placeholder.jpg';
-                      }}
-                    />
-                  )}
-                  <label className="flex-1 cursor-pointer">
-                    <div className="flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-                      <Upload className="w-4 h-4" />
-                      {uploadingThumbnail ? 'Đang tải...' : 'Chọn ảnh đại diện'}
-                    </div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleThumbnailUpload}
-                      disabled={uploadingThumbnail}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">Hỗ trợ: JPG, PNG, GIF, WEBP (tối đa 5MB)</p>
               </div>
 
               {/* Section Quản lý nhiều ảnh */}

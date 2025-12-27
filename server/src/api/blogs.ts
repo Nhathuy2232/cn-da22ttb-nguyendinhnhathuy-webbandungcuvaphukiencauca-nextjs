@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import blogRepository from '../infrastructure/repositories/blogRepository';
+import blogRepository from '../infrastructure/repositories/blogRepositoryImpl';
 
 const router = Router();
 

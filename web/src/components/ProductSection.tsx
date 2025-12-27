@@ -8,9 +8,13 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  thumbnail_url: string;
+  thumbnail_url?: string;
   category_name?: string;
   stock_quantity: number;
+  images?: Array<{
+    image_url: string;
+    is_primary: boolean;
+  }>;
 }
 
 export function ProductSection() {
@@ -64,7 +68,7 @@ export function ProductSection() {
               >
                 <div className="relative overflow-hidden bg-gray-50">
                   <img
-                    src={product.thumbnail_url || '/images/products/placeholder.jpg'}
+                    src={product.thumbnail_url || product.images?.find(img => img.is_primary)?.image_url || '/images/products/placeholder.jpg'}
                     alt={product.name}
                     className="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-300"
                     onError={(e) => {

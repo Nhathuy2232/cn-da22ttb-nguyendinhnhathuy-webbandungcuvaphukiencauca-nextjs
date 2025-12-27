@@ -29,7 +29,6 @@ export interface OrderItemRecord {
   price: number;
   created_at: Date;
   product_name?: string;
-  thumbnail_url?: string | null;
 }
 
 export interface OrderWithItems extends OrderRecord {
@@ -123,7 +122,7 @@ class OrderRepository {
     }
 
     const [items] = await pool.query<RowDataPacket[]>(
-      `SELECT oi.*, p.name as product_name, p.thumbnail_url
+      `SELECT oi.*, p.name as product_name
        FROM order_items oi
        INNER JOIN products p ON p.id = oi.product_id
        WHERE oi.order_id = ?`,
@@ -166,7 +165,7 @@ class OrderRepository {
     }
 
     const [rows] = await pool.query<RowDataPacket[]>(
-      `SELECT o.*, u.full_name as user_name 
+      `SELECT o.*, u.full_name as user_name, u.email as user_email
        FROM orders o 
        LEFT JOIN users u ON o.user_id = u.id 
        ${whereClause} 

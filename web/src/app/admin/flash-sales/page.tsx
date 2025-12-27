@@ -8,7 +8,11 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  thumbnail_url: string;
+  thumbnail_url?: string;
+  images?: Array<{
+    image_url: string;
+    is_primary: boolean;
+  }>;
 }
 
 interface FlashSale {

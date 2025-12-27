@@ -21,7 +21,7 @@ export class CartController {
         quantity: item.quantity,
         product_name: item.product_name || '',
         product_price: item.price || 0,
-        product_thumbnail: item.thumbnail_url || '',
+        product_thumbnail: '', // Will be populated from product images if needed
         stock_quantity: item.stock_quantity || 0,
       }));
       

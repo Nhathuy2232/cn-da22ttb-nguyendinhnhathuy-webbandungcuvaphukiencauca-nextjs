@@ -1,0 +1,31 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_1 = __importDefault(require("../../../api/auth"));
+const products_1 = __importDefault(require("../../../api/products"));
+const categories_1 = __importDefault(require("../../../api/categories"));
+const cart_1 = __importDefault(require("../../../api/cart"));
+const orders_1 = __importDefault(require("../../../api/orders"));
+const admin_1 = __importDefault(require("../../../api/admin"));
+const blogs_1 = __importDefault(require("../../../api/blogs"));
+const shipping_1 = __importDefault(require("../../../api/shipping"));
+const reviews_1 = __importDefault(require("../../../api/reviews"));
+const wishlist_1 = __importDefault(require("../../../api/wishlist"));
+const flash_sales_1 = __importDefault(require("../../../api/flash-sales"));
+const router = (0, express_1.Router)();
+router.use('/auth', auth_1.default);
+router.use('/products', products_1.default);
+router.use('/categories', categories_1.default);
+router.use('/cart', cart_1.default);
+router.use('/orders', orders_1.default);
+router.use('/admin', admin_1.default);
+router.use('/blogs', blogs_1.default);
+router.use('/shipping', shipping_1.default);
+router.use('/reviews', reviews_1.default);
+router.use('/wishlist', wishlist_1.default);
+router.use('/flash-sales', flash_sales_1.default);
+exports.default = router;
+//# sourceMappingURL=indexRoutes.js.map

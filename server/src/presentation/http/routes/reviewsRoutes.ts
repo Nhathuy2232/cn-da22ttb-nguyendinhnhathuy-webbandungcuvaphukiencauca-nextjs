@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middlewares/authMiddleware';
-import reviewRepository from '../../../infrastructure/repositories/reviewRepository';
+import reviewRepository from '../../../infrastructure/repositories/reviewRepositoryImpl';
 
 const router = Router();
 

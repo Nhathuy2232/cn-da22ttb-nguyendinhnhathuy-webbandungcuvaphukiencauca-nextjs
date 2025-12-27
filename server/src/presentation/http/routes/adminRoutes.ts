@@ -1,11 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middlewares/authMiddleware';
 import { adminMiddleware } from '../middlewares/adminMiddleware';
-import productRepository from '../../../infrastructure/repositories/productRepository';
-import categoryRepository from '../../../infrastructure/repositories/categoryRepository';
-import orderRepository from '../../../infrastructure/repositories/orderRepository';
-import couponRepository from '../../../infrastructure/repositories/couponRepository';
-import blogRepository from '../../../infrastructure/repositories/blogRepository';
+import productRepository from '../../../infrastructure/repositories/productRepositoryImpl';
+import categoryRepository from '../../../infrastructure/repositories/categoryRepositoryImpl';
+import orderRepository from '../../../infrastructure/repositories/orderRepositoryImpl';
+import couponRepository from '../../../infrastructure/repositories/couponRepositoryImpl';
+import blogRepository from '../../../infrastructure/repositories/blogRepositoryImpl';
+
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -13,12 +14,13 @@ import fs from 'fs';
 const router = Router();
 
 // Áp dụng middleware cho tất cả routes admin
-router.use(authenticate, adminMiddleware);
+router.use(authenticate);
 
 // ============================================
 // ADMIN - UPLOAD IMAGE
 // ============================================
-const uploadDir = path.join(__dirname, '../../uploads/products');
+// Lưu ảnh vào web/public/images/products thay vì uploads/products
+const uploadDir = path.join(process.cwd(), '..', 'web', 'public', 'images', 'products');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -28,10 +30,8 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    const name = path.basename(file.originalname, ext).replace(/\s+/g, '-');
-    cb(null, `${name}-${uniqueSuffix}${ext}`);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
   },
 });
 
@@ -50,30 +50,25 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-router.post('/upload', upload.single('image'), async (req: Request, res: Response, next: NextFunction) => {
+router.post('/upload', upload.single('image'), (req: Request, res: Response) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: 'Không có file được tải lên' });
+      return res.status(400).json({ message: 'Không có file được upload' });
     }
-    
+
+    // Tạo URL cho ảnh - sử dụng đường dẫn public của frontend
     const imageUrl = `/images/products/${req.file.filename}`;
-    const sourcePath = req.file.path;
-    const destPath = path.join(__dirname, '../../../web/public/images/products', req.file.filename);
-    
-    const destDir = path.dirname(destPath);
-    if (!fs.existsSync(destDir)) {
-      fs.mkdirSync(destDir, { recursive: true });
-    }
-    
-    fs.copyFileSync(sourcePath, destPath);
-    
+
+    console.log('File uploaded successfully:', req.file.filename);
+    console.log('Upload directory:', uploadDir);
     res.json({
-      success: true,
-      imageUrl,
+      message: 'Upload ảnh thành công',
+      imageUrl: imageUrl,
       filename: req.file.filename
     });
   } catch (error) {
-    next(error);
+    console.error('Upload error:', error);
+    res.status(500).json({ message: 'Lỗi upload ảnh' });
   }
 });
 
@@ -130,6 +125,21 @@ router.get('/products', async (req: Request, res: Response, next: NextFunction) 
     
     const products = await productRepository.list(filters);
     res.json(products);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/products/:id', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = parseInt(req.params.id!);
+    const product = await productRepository.findById(id);
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Không tìm thấy sản phẩm' });
+    }
+    
+    res.json(product);
   } catch (error) {
     next(error);
   }

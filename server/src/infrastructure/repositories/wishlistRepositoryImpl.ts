@@ -9,7 +9,6 @@ interface WishlistItem extends RowDataPacket {
   // Joined product info
   product_name?: string;
   price?: number;
-  thumbnail_url?: string;
   stock_quantity?: number;
 }
 
@@ -41,14 +40,13 @@ class WishlistRepository {
    */
   async getByUser(userId: number): Promise<WishlistItem[]> {
     const [rows] = await pool.query<WishlistItem[]>(
-      `SELECT 
+      `SELECT
         w.id,
         w.user_id,
         w.product_id,
         w.created_at,
         p.name as product_name,
         p.price,
-        p.thumbnail_url,
         p.stock_quantity
       FROM wishlists w
       INNER JOIN products p ON w.product_id = p.id

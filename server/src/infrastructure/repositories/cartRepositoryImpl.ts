@@ -10,7 +10,6 @@ export interface CartItemRecord {
   updated_at: Date;
   product_name?: string;
   price?: number;
-  thumbnail_url?: string | null;
   stock_quantity?: number;
 }
 
@@ -51,7 +50,7 @@ class CartRepository {
     const cart = await this.getOrCreateCart(userId);
     
     const [rows] = await pool.query<RowDataPacket[]>(
-      `SELECT ci.*, p.name as product_name, p.price, p.thumbnail_url, p.stock_quantity
+      `SELECT ci.*, p.name as product_name, p.price, p.stock_quantity
        FROM cart_items ci
        INNER JOIN products p ON p.id = ci.product_id
        WHERE ci.cart_id = ?

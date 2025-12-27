@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middlewares/authMiddleware';
-import wishlistRepository from '../../../infrastructure/repositories/wishlistRepository';
+import wishlistRepository from '../../../infrastructure/repositories/wishlistRepositoryImpl';
 
 const router = Router();
 

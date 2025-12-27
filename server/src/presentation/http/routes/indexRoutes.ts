@@ -1,15 +1,15 @@
 import { Router } from 'express';
-import authRoutes from './auth';
-import productRoutes from './products';
-import categoryRoutes from './categories';
-import cartRoutes from './cart';
-import orderRoutes from './orders';
-import adminRoutes from './admin';
-import blogRoutes from './blogs';
-import shippingRoutes from './shipping';
-import reviewRoutes from './reviews';
-import wishlistRoutes from './wishlist';
-import flashSaleRoutes from './flash-sales';
+import authRoutes from '../../../api/auth';
+import productRoutes from '../../../api/products';
+import categoryRoutes from '../../../api/categories';
+import cartRoutes from '../../../api/cart';
+import orderRoutes from '../../../api/orders';
+import adminRoutes from '../../../api/admin';
+import blogRoutes from '../../../api/blogs';
+import shippingRoutes from '../../../api/shipping';
+import reviewRoutes from '../../../api/reviews';
+import wishlistRoutes from '../../../api/wishlist';
+import flashSaleRoutes from '../../../api/flash-sales';
 
 const router = Router();
 

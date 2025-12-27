@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import env from '../../../config/env';
 import { AuthenticatedUser } from '../../../modules/auth/auth.service';
-import { UserRole } from '../../../infrastructure/repositories/userRepository';
+import { UserRole } from '../../../infrastructure/repositories/userRepositoryImpl';
 
 export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;

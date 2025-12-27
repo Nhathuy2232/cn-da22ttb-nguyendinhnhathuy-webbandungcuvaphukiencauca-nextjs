@@ -1,13 +1,13 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HelpCircle, ShoppingCart, Package, Users, Shield, Wrench } from 'lucide-react';
 
 export default function SupportPage() {
-  const searchParams = useSearchParams();
   const [activeSection, setActiveSection] = useState<string>('help-center');
 
   useEffect(() => {
@@ -17,13 +17,13 @@ export default function SupportPage() {
       setActiveSection(hash);
       // Scroll to content
       setTimeout(() => {
-        const element = document.getElementById('content-section');
+        const element = document.getElementById(hash);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         }
       }, 100);
     }
-  }, [searchParams]);
+  }, []);
 
   const sections = [
     { id: 'help-center', title: 'Trung Tâm Trợ Giúp', icon: HelpCircle },
