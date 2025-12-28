@@ -262,7 +262,7 @@ class OrderService {
         
         // Nếu hết hàng, cập nhật trạng thái sản phẩm
         if (newStock <= 0) {
-          await productRepository.update(item.product_id, { status: 'out_of_stock' });
+          await productRepository.update(item.product_id, { status: 'inactive' });
         }
       }
     }
@@ -288,7 +288,7 @@ class OrderService {
           total: order.total_amount,
           paymentMethod: order.payment_method,
           shippingAddress: order.recipient_address || 'N/A',
-          ghnOrderCode: order.ghn_order_code,
+          ghnOrderCode: order.ghn_order_code || '',
           customerEmail: user.email,
         });
       }

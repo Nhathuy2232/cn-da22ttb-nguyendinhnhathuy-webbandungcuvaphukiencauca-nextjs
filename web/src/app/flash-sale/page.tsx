@@ -220,9 +220,9 @@ export default function FlashSalePage() {
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {sortedProducts.map((product) => (
+              {sortedProducts.map((product, index) => (
                   <Link
-                    key={product.product_id}
+                    key={`${product.product_id}-${index}`}
                     href={`/products/${product.product_id}`}
                     className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 group border border-gray-100"
                   >

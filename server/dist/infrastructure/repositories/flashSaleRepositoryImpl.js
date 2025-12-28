@@ -26,8 +26,8 @@ class FlashSaleRepository {
         return rows.length ? rows[0] : null;
     }
     async listActive() {
-        const [rows] = await database_1.default.query(`SELECT 
-        fs.*,
+        const [rows] = await database_1.default.query(`SELECT DISTINCT
+        fs.id, fs.product_id, fs.discount_percentage, fs.start_time, fs.end_time, fs.status, fs.created_at, fs.updated_at,
         p.name as product_name,
         p.price as product_price,
         pi.image_url as product_thumbnail,

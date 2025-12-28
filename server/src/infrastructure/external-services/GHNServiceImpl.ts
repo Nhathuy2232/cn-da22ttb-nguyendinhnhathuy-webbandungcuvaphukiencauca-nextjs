@@ -311,7 +311,7 @@ class GHNService {
           toDistrict: request.toDistrictId,
         });
 
-        if (serviceResponse.success && serviceResponse.data && serviceResponse.data.length > 0) {
+        if (serviceResponse.success && serviceResponse.data && serviceResponse.data.length > 0 && serviceResponse.data[0]) {
           serviceId = serviceResponse.data[0].service_id;
           serviceTypeId = serviceResponse.data[0].service_type_id;
         } else {

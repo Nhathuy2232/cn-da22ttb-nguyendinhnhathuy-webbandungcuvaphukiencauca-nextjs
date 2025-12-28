@@ -205,8 +205,8 @@ router.post('/calculate-fee', async (req, res, next) => {
             });
         }
         const result = await GHNServiceImpl_1.default.calculateFeeAsync({
-            serviceId: serviceId || 53320,
-            serviceTypeId: serviceTypeId || 2,
+            serviceId: serviceId,
+            serviceTypeId: serviceTypeId,
             fromDistrictId: fromDistrictId || 1572, // Default: Trà Vinh district
             toDistrictId,
             toWardCode,

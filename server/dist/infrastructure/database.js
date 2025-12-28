@@ -14,7 +14,11 @@ const pool = promise_1.default.createPool({
     database: env_1.default.database.database,
     waitForConnections: true,
     connectionLimit: env_1.default.database.connectionLimit,
-    namedPlaceholders: true,
+    namedPlaceholders: false,
+    charset: 'utf8mb4',
+    acquireTimeoutMillis: 60000,
+    queryTimeout: 60000,
+    connectTimeout: 60000,
 });
 pool.on('connection', () => {
     logger_1.default.debug('MySQL connection established');

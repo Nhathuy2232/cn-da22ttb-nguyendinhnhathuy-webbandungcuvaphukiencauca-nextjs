@@ -18,9 +18,19 @@ class CartRepository {
     }
     async getItemsByUser(userId) {
         const cart = await this.getOrCreateCart(userId);
-        const [rows] = await database_1.default.query(`SELECT ci.*, p.name as product_name, p.price, p.stock_quantity
+        const [rows] = await database_1.default.query(`SELECT ci.*, p.name as product_name, 
+       COALESCE(fs.discounted_price, p.price) as price, 
+       p.stock_quantity,
+       COALESCE(pi.image_url, '/images/products/placeholder.jpg') as product_thumbnail
        FROM cart_items ci
        INNER JOIN products p ON p.id = ci.product_id
+       LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_primary = 1
+       LEFT JOIN (
+         SELECT product_id, ROUND(price * (100 - discount_percentage) / 100, 0) as discounted_price
+         FROM flash_sales fs2
+         INNER JOIN products p2 ON fs2.product_id = p2.id
+         WHERE fs2.status = 'active' AND fs2.start_time <= NOW() AND fs2.end_time > NOW()
+       ) fs ON fs.product_id = p.id
        WHERE ci.cart_id = ?
        ORDER BY ci.created_at DESC`, [cart.id]);
         return rows;

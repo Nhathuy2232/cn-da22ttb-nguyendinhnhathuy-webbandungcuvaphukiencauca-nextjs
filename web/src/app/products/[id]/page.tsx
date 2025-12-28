@@ -22,6 +22,10 @@ interface Product {
   name: string;
   description: string;
   price: number;
+  effective_price?: number;
+  discount_percentage?: number;
+  start_time?: string;
+  end_time?: string;
   sku: string;
   stock_quantity: number;
   category_id: number;
@@ -202,9 +206,9 @@ export default function ProductDetailPage() {
     );
   }
 
-  const displayPrice = product.price;
-  const hasDiscount = false;
-  const discountPercentage = 0;
+  const displayPrice = product.effective_price || product.price;
+  const hasDiscount = product.effective_price && product.effective_price < product.price;
+  const discountPercentage = product.discount_percentage || 0;
 
   const productImages = product.images && product.images.length > 0
     ? product.images
@@ -307,6 +311,16 @@ export default function ProductDetailPage() {
                   <span className="text-4xl font-bold text-primary-600">
                     {formatPrice(displayPrice)}
                   </span>
+                  {hasDiscount && (
+                    <>
+                      <span className="text-lg text-gray-500 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                      <span className="text-red-600 font-semibold">
+                        -{discountPercentage}%
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
 

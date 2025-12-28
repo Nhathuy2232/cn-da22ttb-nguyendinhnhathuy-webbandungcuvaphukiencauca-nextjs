@@ -71,7 +71,33 @@ export function FlashSale() {
   }
 
   if (products.length === 0) {
-    return null;
+    return (
+      <div className="container mx-auto px-4 py-4">
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  <svg className="w-7 h-7 text-yellow-300" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/>
+                  </svg>
+                  <span className="text-2xl font-bold text-white tracking-wide">GIẢM GIÁ SỐC</span>
+                </div>
+              </div>
+              <Link href="/flash-sale" className="text-white hover:text-yellow-300 transition-colors">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm">Xem tất cả</span>
+                  <ChevronRight className="w-4 h-4" />
+                </div>
+              </Link>
+            </div>
+          </div>
+          <div className="p-8 text-center text-gray-500">
+            Hiện tại không có chương trình flash sale nào đang diễn ra.
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -111,9 +137,9 @@ export function FlashSale() {
         {/* Products */}
         <div className="p-4">
           <div className="grid grid-cols-6 gap-2">
-            {products.map((product) => (
+            {products.map((product, index) => (
               <Link
-                key={product.product_id}
+                key={`${product.product_id}-${index}`}
                 href={`/products/${product.product_id}` as any}
                 className="border border-gray-100 rounded-sm hover:shadow-md transition-shadow overflow-hidden group"
               >

@@ -8,6 +8,7 @@ export interface CartItemRecord {
     product_name?: string;
     price?: number;
     stock_quantity?: number;
+    product_thumbnail?: string;
 }
 export interface CartRecord {
     id: number;

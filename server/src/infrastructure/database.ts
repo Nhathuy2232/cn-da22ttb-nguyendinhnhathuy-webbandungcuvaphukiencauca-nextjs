@@ -10,8 +10,12 @@ const pool = mysql.createPool({
   database: env.database.database,
   waitForConnections: true,
   connectionLimit: env.database.connectionLimit,
-  namedPlaceholders: true,
-});
+  namedPlaceholders: false,
+  charset: 'utf8mb4',
+  acquireTimeoutMillis: 60000,
+  queryTimeout: 60000,
+  connectTimeout: 60000,
+} as any);
 
 pool.on('connection', () => {
   logger.debug('MySQL connection established');

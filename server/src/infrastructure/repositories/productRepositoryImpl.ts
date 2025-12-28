@@ -84,9 +84,18 @@ class ProductRepository {
 
   async findById(id: number): Promise<ProductRecord | null> {
     const [rows] = await pool.query<RowDataPacket[]>(
-      `SELECT p.*, c.name as category_name 
+      `SELECT p.*, c.name as category_name,
+       COALESCE(fs.discounted_price, p.price) as effective_price,
+       fs.discount_percentage, fs.start_time, fs.end_time
        FROM products p 
        LEFT JOIN categories c ON p.category_id = c.id 
+       LEFT JOIN (
+         SELECT product_id, ROUND(price * (100 - discount_percentage) / 100, 0) as discounted_price,
+         discount_percentage, start_time, end_time
+         FROM flash_sales fs2
+         INNER JOIN products p2 ON fs2.product_id = p2.id
+         WHERE fs2.status = 'active' AND fs2.start_time <= NOW() AND fs2.end_time > NOW()
+       ) fs ON fs.product_id = p.id
        WHERE p.id = ? LIMIT 1`,
       [id]
     );
@@ -94,7 +103,7 @@ class ProductRepository {
       return null;
     }
     
-    const product = rows[0] as ProductRecord;
+    const product = rows[0] as ProductRecord & { effective_price: number; discount_percentage?: number; start_time?: string; end_time?: string };
     
     // Lấy danh sách hình ảnh
     const [imageRows] = await pool.query<RowDataPacket[]>(
