@@ -29,39 +29,39 @@ Hệ thống bao gồm:
 - RESTful API Backend - Node.js/Express với Clean Architecture
 - Tích hợp thanh toán và vận chuyển GHN
 
-## ✨ Tính năng
+##  Tính năng
 
-### 🛍️ Dành cho Khách hàng
-- 🔐 Xác thực người dùng với JWT
-- 🛍️ Duyệt và tìm kiếm sản phẩm
-- 🛒 Quản lý giỏ hàng (Thêm, Sửa, Xóa)
-- 💳 Đặt hàng và thanh toán (COD)
-- 📦 Theo dõi trạng thái đơn hàng
-- 📝 Đọc blog về kỹ thuật câu cá
-- ⚡ Sản phẩm giảm giá sốc (Flash Sale)
-- 👤 Quản lý thông tin cá nhân
-- 🗺️ Tích hợp Google Maps (trang giới thiệu)
-- 💬 Trang hỗ trợ khách hàng
+###  Dành cho Khách hàng
+-  Xác thực người dùng với JWT
+-  Duyệt và tìm kiếm sản phẩm
+-  Quản lý giỏ hàng (Thêm, Sửa, Xóa)
+-  Đặt hàng và thanh toán (COD)
+-  Theo dõi trạng thái đơn hàng
+-  Đọc blog về kỹ thuật câu cá
+-  Sản phẩm giảm giá sốc (Flash Sale)
+-  Quản lý thông tin cá nhân
+-  Tích hợp Google Maps (trang giới thiệu)
+-  Trang hỗ trợ khách hàng
 
-### 👨‍💼 Dành cho Quản trị viên
-- 📊 Dashboard thống kê tổng quan
-- 📦 Quản lý sản phẩm (Tạo, Sửa, Xóa)
-- 🏷️ Quản lý danh mục sản phẩm
-- 📋 Quản lý đơn hàng và trạng thái
-- ✍️ Quản lý blog và bài viết
-- 🖼️ Upload và quản lý hình ảnh
-- 👥 Quản lý người dùng
-- ⚡ Quản lý Flash Sale
+### Dành cho Quản trị viên
+-  Dashboard thống kê tổng quan
+-  Quản lý sản phẩm (Tạo, Sửa, Xóa)
+-  Quản lý danh mục sản phẩm
+-  Quản lý đơn hàng và trạng thái
+-  Quản lý blog và bài viết
+-  Upload và quản lý hình ảnh
+-  Quản lý người dùng
+-  Quản lý Flash Sale
 
-### 🚀 Tính năng nổi bật
-- 🚚 Tích hợp API Giao Hàng Nhanh (GHN)
-- 📧 Gửi email tự động khi đặt hàng
-- 🔍 Tìm kiếm và lọc sản phẩm nâng cao
-- 📱 Thiết kế responsive trên mọi thiết bị
-- 🌐 Giao diện hoàn toàn tiếng Việt
-- 🏗️ Clean Architecture cho backend
+###  Tính năng nổi bật
+-  Tích hợp API Giao Hàng Nhanh (GHN)
+-  Gửi email tự động khi đặt hàng
+-  Tìm kiếm và lọc sản phẩm nâng cao
+-  Thiết kế responsive trên mọi thiết bị
+-  Giao diện hoàn toàn tiếng Việt
+-  Clean Architecture cho backend
 
-## 🛠️ Công nghệ sử dụng
+##  Công nghệ sử dụng
 
 ### Frontend
 - **Framework**: Next.js 15.5.6 (React 18.3.1)
@@ -268,7 +268,7 @@ Frontend sẽ chạy tại: http://localhost:3000
 - Email: customer@example.com
 - Password: customer123
 
-## 📚 API Documentation
+##  API Documentation
 
 API Documentation chi tiết được lưu tại file [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
 
@@ -323,7 +323,7 @@ node test-ghn-api.js
 
 _Thêm screenshots của ứng dụng tại đây_
 
-## 🤝 Đóng góp
+##  Đóng góp
 
 Contributions, issues và feature requests đều được chào đón! 
 
