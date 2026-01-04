@@ -72,7 +72,9 @@ class FlashSaleRepository {
         p.name as product_name,
         p.price as product_price,
         pi.image_url as product_thumbnail,
-        ROUND(p.price * (100 - fs.discount_percentage) / 100, 0) as discounted_price
+        ROUND(p.price * (100 - fs.discount_percentage) / 100, 0) as discounted_price,
+        COALESCE(p.stock_quantity, 100) as flash_sale_quantity,
+        0 as sold_quantity
        FROM flash_sales fs
        INNER JOIN products p ON fs.product_id = p.id
        LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = 1

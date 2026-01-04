@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Fish, Award, Users, MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 export default function AboutPage() {
@@ -242,12 +243,12 @@ export default function AboutPage() {
             <p className="text-xl text-gray-600 mb-8">
               Khám phá bộ sưu tập sản phẩm câu cá chất lượng cao của chúng tôi
             </p>
-            <a
+            <Link
               href="/products"
               className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             >
               Xem Sản Phẩm
-            </a>
+            </Link>
           </div>
         </div>
       </section>

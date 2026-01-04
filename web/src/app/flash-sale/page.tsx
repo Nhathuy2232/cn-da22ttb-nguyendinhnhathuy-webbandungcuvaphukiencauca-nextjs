@@ -38,11 +38,18 @@ export default function FlashSalePage() {
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {
-            setProducts(result.data);
+            // Parse numeric fields
+            const parsedProducts = result.data.map((p: any) => ({
+              ...p,
+              product_price: Number(p.product_price),
+              discount_percentage: Number(p.discount_percentage),
+              discounted_price: Number(p.discounted_price)
+            }));
+            setProducts(parsedProducts);
             
             // Calculate time left based on the earliest end_time
-            if (result.data.length > 0) {
-              const earliestEnd = new Date(result.data[0].end_time);
+            if (parsedProducts.length > 0) {
+              const earliestEnd = new Date(parsedProducts[0].end_time);
               calculateTimeLeft(earliestEnd);
             }
           }

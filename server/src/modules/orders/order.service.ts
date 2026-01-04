@@ -2,6 +2,7 @@ import cartRepository from '../../infrastructure/repositories/cartRepositoryImpl
 import orderRepository from '../../infrastructure/repositories/orderRepositoryImpl';
 import productRepository from '../../infrastructure/repositories/productRepositoryImpl';
 import userRepository from '../../infrastructure/repositories/userRepositoryImpl';
+import couponRepository from '../../infrastructure/repositories/couponRepositoryImpl';
 import ghnService from '../../infrastructure/external-services/GHNServiceImpl';
 import emailService from '../../infrastructure/external-services/EmailServiceImpl';
 
@@ -11,6 +12,7 @@ class OrderService {
     addressId?: number;
     paymentMethod: 'cod' | 'bank_transfer' | 'e_wallet';
     note?: string;
+    coupon_code?: string;
     shipping_info?: {
       recipient_name: string;
       recipient_phone: string;
@@ -75,7 +77,35 @@ class OrderService {
     );
     
     const shippingFee = input.shipping_fee || 0;
-    const totalAmount = subtotal + shippingFee;
+    
+    // Validate và áp dụng coupon nếu có
+    let couponId: number | null = null;
+    let discountAmount = 0;
+    
+    if (input.coupon_code) {
+      const validation = await couponRepository.validateCoupon(input.coupon_code, subtotal);
+      if (!validation.valid) {
+        throw new Error(validation.message);
+      }
+      
+      const coupon = validation.coupon!;
+      couponId = coupon.id;
+      
+      // Tính discount amount
+      if (coupon.discount_type === 'percentage') {
+        discountAmount = (subtotal * coupon.discount_value) / 100;
+        if (coupon.max_discount && discountAmount > coupon.max_discount) {
+          discountAmount = coupon.max_discount;
+        }
+      } else {
+        discountAmount = coupon.discount_value;
+      }
+      
+      // Đảm bảo discount không vượt quá subtotal
+      discountAmount = Math.min(discountAmount, subtotal);
+    }
+    
+    const totalAmount = subtotal + shippingFee - discountAmount;
 
     // Nếu có shipping_info thì phải tạo GHN trước, thành công mới lưu DB
     if (input.shipping_info) {
@@ -138,6 +168,8 @@ class OrderService {
           addressId: input.addressId || null,
           totalAmount,
           shippingFee,
+          couponId,
+          discountAmount,
           paymentMethod: input.paymentMethod,
           ...(input.note && { note: input.note }),
           items: itemsPayload,
@@ -152,6 +184,11 @@ class OrderService {
         // Cập nhật mã đơn GHN vào order
         await orderRepository.updateGHNOrderCode(order.id, ghnResult.data.order_code);
         order.ghn_order_code = ghnResult.data.order_code;
+
+        // Tăng số lần sử dụng coupon nếu có
+        if (couponId) {
+          await couponRepository.incrementUsedCount(couponId);
+        }
 
         // Gửi email thông báo đơn hàng mới
         try {
@@ -208,10 +245,18 @@ class OrderService {
         addressId: input.addressId || null,
         totalAmount,
         shippingFee,
+        couponId,
+        discountAmount,
         paymentMethod: input.paymentMethod,
         ...(input.note && { note: input.note }),
         items: itemsPayload,
       });
+      
+      // Tăng số lần sử dụng coupon nếu có
+      if (couponId) {
+        await couponRepository.incrementUsedCount(couponId);
+      }
+      
       if (!input.items) {
         await cartRepository.clear(input.userId);
       }

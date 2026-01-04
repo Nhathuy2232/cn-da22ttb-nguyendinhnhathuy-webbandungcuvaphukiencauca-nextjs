@@ -180,7 +180,7 @@ export default function SupportPage() {
                       Thêm Vào Giỏ Hàng
                     </h3>
                     <p className="text-gray-600 ml-10">
-                      Chọn số lượng và nhấn "Thêm vào giỏ hàng". Bạn có thể tiếp tục mua sắm hoặc vào giỏ hàng để thanh toán.
+                      Chọn số lượng và nhấn &quot;Thêm vào giỏ hàng&quot;. Bạn có thể tiếp tục mua sắm hoặc vào giỏ hàng để thanh toán.
                     </p>
                   </div>
 
@@ -211,7 +211,7 @@ export default function SupportPage() {
                       Xác Nhận Đơn Hàng
                     </h3>
                     <p className="text-gray-600 ml-10">
-                      Kiểm tra lại thông tin và nhấn "Đặt hàng". Bạn sẽ nhận được email xác nhận và mã đơn hàng.
+                      Kiểm tra lại thông tin và nhấn &quot;Đặt hàng&quot;. Bạn sẽ nhận được email xác nhận và mã đơn hàng.
                       Theo dõi tình trạng đơn hàng qua tài khoản của bạn.
                     </p>
                   </div>

@@ -50,7 +50,16 @@ export function FlashSale() {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          setProducts(data.data.slice(0, 6)); // Lấy 6 sản phẩm đầu tiên
+          // Parse numeric fields
+          const parsedProducts = data.data.slice(0, 6).map((p: any) => ({
+            ...p,
+            product_price: Number(p.product_price),
+            discount_percentage: Number(p.discount_percentage),
+            discounted_price: Number(p.discounted_price),
+            flash_sale_quantity: Number(p.flash_sale_quantity),
+            sold_quantity: Number(p.sold_quantity)
+          }));
+          setProducts(parsedProducts);
         }
       }
     } catch (error) {

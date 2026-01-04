@@ -1,6 +1,7 @@
 "use client";
 
 import { ShoppingCart, Search, User, LogOut } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
@@ -34,10 +35,14 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
             <div className="flex items-center gap-2">
-              <svg className="w-10 h-10" viewBox="0 0 64 64" fill="white">
-                <path d="M32 8C18.7 8 8 18.7 8 32s10.7 24 24 24 24-10.7 24-24S45.3 8 32 8zm0 4c11.1 0 20 8.9 20 20s-8.9 20-20 20-20-8.9-20-20S20.9 12 32 12z"/>
-                <path d="M28 22v20l16-10z" fill="#f97316"/>
-              </svg>
+              <Image
+                src="/images/logos/Logo2.png"
+                alt="Cần Thủ Shop"
+                width={62}
+                height={62}
+                className="w-[62px] h-[62px] rounded-full object-contain"
+                priority
+              />
               <span className="text-2xl font-bold">Cần Thủ Shop</span>
             </div>
           </Link>

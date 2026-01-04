@@ -12,7 +12,7 @@ export class OrderController {
         });
       }
 
-      const { address_id, payment_method, note, shipping_info, shipping_fee, items } = req.body;
+      const { address_id, payment_method, note, shipping_info, shipping_fee, items, coupon_code } = req.body;
 
       // Nếu có shipping_info (đặt hàng từ cart với GHN)
       if (shipping_info) {
@@ -31,6 +31,7 @@ export class OrderController {
           shipping_info,
           shipping_fee,
           items,
+          coupon_code,
         });
 
         return res.status(201).json({
@@ -61,6 +62,7 @@ export class OrderController {
         addressId: address_id,
         paymentMethod: payment_method,
         note,
+        coupon_code,
       });
 
       res.status(201).json({

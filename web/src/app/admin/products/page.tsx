@@ -35,6 +35,9 @@ export default function AdminProductsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 20;
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
@@ -52,16 +55,23 @@ export default function AdminProductsPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
-    fetchProducts();
     fetchCategories();
-  }, [search]);
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, page]);
 
   const fetchProducts = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("accessToken");
-      const url = search
-        ? `http://localhost:4000/api/admin/products?search=${search}`
-        : "http://localhost:4000/api/admin/products";
+      const urlObj = new URL("http://localhost:4000/api/admin/products");
+      urlObj.searchParams.set("page", String(page));
+      urlObj.searchParams.set("limit", String(limit));
+      if (search) urlObj.searchParams.set("search", search);
+      const url = urlObj.toString();
 
       const response = await fetch(url, {
         headers: {
@@ -72,6 +82,7 @@ export default function AdminProductsPage() {
       if (response.ok) {
         const data = await response.json();
         setProducts(data.items || []);
+        setTotal(Number(data.total || 0));
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -306,7 +317,10 @@ export default function AdminProductsPage() {
             type="text"
             placeholder="Tìm kiếm sản phẩm..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
@@ -404,6 +418,54 @@ export default function AdminProductsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {(() => {
+        const totalPages = Math.max(1, Math.ceil(total / limit));
+        if (totalPages <= 1) return null;
+
+        return (
+          <div className="flex items-center justify-between mt-4">
+            <div className="text-sm text-gray-600">
+              Trang {page} / {totalPages} (Tổng: {total} sản phẩm)
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                Trước
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setPage(p)}
+                  className={`px-3 py-1 border rounded-lg text-sm ${
+                    p === page
+                      ? "border-primary-600 bg-primary-600 text-white"
+                      : "border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1 border border-gray-300 rounded-lg text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              >
+                Sau
+              </button>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Modal */}
       {showModal && (

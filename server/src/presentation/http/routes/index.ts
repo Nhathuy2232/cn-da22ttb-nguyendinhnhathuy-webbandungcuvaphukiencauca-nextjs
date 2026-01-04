@@ -14,6 +14,7 @@ import reviewsRoutes from './reviewsRoutes';
 import wishlistRoutes from './wishlistRoutes';
 import shippingRoutes from './shippingRoutes';
 import flashSalesRoutes from './flash-salesRoutes';
+import couponsRoutes from './couponsRoutes';
 import adminRoutes from './adminRoutes';
 
 const router = Router();
@@ -24,6 +25,7 @@ router.use('/products', productsRoutes);
 router.use('/categories', categoriesRoutes);
 router.use('/blogs', blogsRoutes);
 router.use('/shipping', shippingRoutes);
+router.use('/coupons', couponsRoutes);
 
 // Protected routes (require authentication)
 router.use('/cart', cartRoutes);

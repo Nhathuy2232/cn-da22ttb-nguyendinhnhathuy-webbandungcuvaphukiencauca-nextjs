@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ShoppingCart, Heart, Truck, Shield, RotateCcw, Star, Minus, Plus } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
@@ -219,9 +220,9 @@ export default function ProductDetailPage() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <nav className="text-sm text-gray-600 mb-6">
-          <a href="/" className="hover:text-primary-600">Trang chủ</a>
+          <Link href="/" className="hover:text-primary-600">Trang chủ</Link>
           <span className="mx-2">/</span>
-          <a href="/products" className="hover:text-primary-600">Sản phẩm</a>
+          <Link href="/products" className="hover:text-primary-600">Sản phẩm</Link>
           <span className="mx-2">/</span>
           <span className="text-gray-900">{product.name}</span>
         </nav>

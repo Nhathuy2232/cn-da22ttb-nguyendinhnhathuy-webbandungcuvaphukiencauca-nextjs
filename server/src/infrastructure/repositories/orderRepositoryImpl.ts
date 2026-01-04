@@ -41,6 +41,8 @@ class OrderRepository {
     addressId?: number | null;
     totalAmount: number;
     shippingFee?: number;
+    couponId?: number | null;
+    discountAmount?: number;
     paymentMethod: 'cod' | 'bank_transfer' | 'e_wallet';
     note?: string;
     items: { productId: number; quantity: number; price: number }[];
@@ -57,15 +59,17 @@ class OrderRepository {
       
       const [orderResult] = await connection.query<ResultSetHeader>(
         `INSERT INTO orders (
-          user_id, address_id, status, payment_method, total_amount, shipping_fee, note,
+          user_id, address_id, status, payment_method, total_amount, shipping_fee, coupon_id, discount_amount, note,
           recipient_name, recipient_phone, recipient_address, province_id, district_id, ward_code
-        ) VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        ) VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           params.userId, 
           params.addressId || null, 
           params.paymentMethod, 
           params.totalAmount, 
           params.shippingFee || 0,
+          params.couponId || null,
+          params.discountAmount || 0,
           params.note || null,
           params.recipientName || null,
           params.recipientPhone || null,
